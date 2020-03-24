@@ -307,8 +307,13 @@ class Router
 		';
 		$xml = $this->http->postXml($this->getUrl('api/sms/send-sms'), $sendSmsXml);
 		$obj = new \SimpleXMLElement($xml);
+		//Simple check if login is OK.
+		if ((string)$obj != 'OK')
+		{
+			return false;
+		}
 
-		// Check Sms status
+		//Check Sms status
 		$obj = $this->generalizedGet('api/sms/send-status');
 		if(property_exists($obj, 'FailPhone'))
 		{
