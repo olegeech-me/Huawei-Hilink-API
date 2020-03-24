@@ -20,13 +20,13 @@ $sendFailed = null;
 foreach ($phones as $receiver) {
   if (! $router->sendSms($receiver, $message) ) {
     $sendFailed = True;
+    echo "SMS ERROR: $receiver\n";
+  } else {
+    echo "SMS OK: $receiver\n";
   }
 }
-if ($sendFailed) {
-	echo "SMS ERROR\n";
-	exit(1);
-} else {
-	echo "SMS SENT OK\n";
-	exit(0);
-}
+
+$code = isset($sendFailed) ? 1 : 0;
+exit($code);
+
 ?>
