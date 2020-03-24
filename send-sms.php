@@ -13,14 +13,20 @@ $router->setAddress('192.168.8.1');
 $router->login('admin', 'admin');
 
 // Get number as first argument, message on STDIN
-$receiver = $argv[1];
+$phones = explode(',', $argv[1]);
 $message = file_get_contents("php://stdin");
+$sendFailed = null;
 
-if ($router->sendSms($receiver, $message) ) {
-	echo "SMS SENT OK\n";
-	exit(0);
-} else {
+foreach ($phones as $receiver) {
+  if (! $router->sendSms($receiver, $message) ) {
+    $sendFailed = True;
+  }
+}
+if ($sendFailed) {
 	echo "SMS ERROR\n";
 	exit(1);
+} else {
+	echo "SMS SENT OK\n";
+	exit(0);
 }
 ?>
