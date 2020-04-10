@@ -15,7 +15,11 @@ $router = new if0xx\HuaweiHilinkApi\Router;
 $router->setAddress('192.168.8.1');
 
 // Username and password.
-$router->login('admin', 'admin');
+if (! $router->login('admin', 'admin')) {
+  echo "Login failed\n";
+  exit(1);
+}
+
 
 // Get number as first argument, message on STDIN
 $phones = explode(',', $argv[1]);

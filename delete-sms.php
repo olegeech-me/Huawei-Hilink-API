@@ -3,18 +3,12 @@
 
 // This script is meant for cli usage
 //
-// First argument to the script - which messages are we listing,
+// First argument to the script - which messages are we clearing,
 // either 'inbox' or 'sent'
 
 $numberSmsToList = 50;
 
 require_once 'vendor/autoload.php';
-
-function sortByIndex($a, $b) {
-  // sort sms by index
-  $retval = strcmp($a->Index, $b->Index);
-  return $retval;
-}
 
 // The router class is the main entry point for interaction.
 $router = new if0xx\HuaweiHilinkApi\Router;
@@ -28,7 +22,7 @@ if (! $router->login('admin', 'admin')) {
   exit(1);
 }
 
-# what are we listing?
+# what are we clearing?
 if ($argv[1] == 'inbox') {
   $data = $router->getInBox(1, $numberSmsToList, false);
 } elseif ($argv[1] == 'sent') {
@@ -40,27 +34,16 @@ if ($argv[1] == 'inbox') {
 
 # exit if no messages
 if (! $data->Messages->Message) {
-  exit(0);
+  echo "No messages in '$argv[1]' to delete\n";
+  exit(1);
+}
+$total = count($data->Messages->Message);
+
+for ($i = 0; $i < $total ; $i++) {
+  $index = $data->Messages->Message[$i]->Index;
+  $router->deleteSms($index);
+  echo "SMS [$index] was deleted\n";
 }
 
-# translate simpleXML to normal array, so we can sort stuff
-$messages = array();
-foreach ($data->Messages->Message as $obj) {
-  $messages[] = $obj;
-}
-usort($messages, 'sortByIndex');
+echo "\nAll messages in '$argv[1]' were deleted successfully\n";
 
-# print sorted messages
-foreach ($messages as $message) {
-  $report .= <<<EOF
-
-Index: $message->Index
-Date: $message->Date
-Phone: $message->Phone
-Text: $message->Content
-
-EOF;
-
-}
-
-print($report);
