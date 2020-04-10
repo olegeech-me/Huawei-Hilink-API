@@ -1,5 +1,11 @@
 #!/usr/bin/env php
 <?php
+
+// This script is meant for cli usage
+//
+// First argument to the script - Phone numbers (one or comma-separated list)
+// Message should be suppied on STDIN
+
 require_once 'vendor/autoload.php';
 
 // The router class is the main entry point for interaction.
@@ -9,7 +15,6 @@ $router = new if0xx\HuaweiHilinkApi\Router;
 $router->setAddress('192.168.8.1');
 
 // Username and password.
-// Username is always admin as far as I can tell, default password is admin as well.
 $router->login('admin', 'admin');
 
 // Get number as first argument, message on STDIN
@@ -20,6 +25,7 @@ $sendFailed = null;
 foreach ($phones as $receiver) {
   if (! $router->sendSms($receiver, $message) ) {
     $sendFailed = True;
+    # if we're running from cron - output to stderr
     if (isset($_SERVER['TERM'])) {
       echo "SMS ERROR: $receiver\n";
     } else {
