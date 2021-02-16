@@ -18,7 +18,7 @@ $router->setAddress('192.168.8.1');
 
 // Username and password.
 if (! $router->login('admin', 'admin')) {
-  echo "Login failed\n";
+  fwrite(STDERR, "Login failed\n");
   exit(1);
 }
 
@@ -28,13 +28,13 @@ if ($argv[1] == 'inbox') {
 } elseif ($argv[1] == 'sent') {
   $data = $router->getSentBox(1, $numberSmsToList, false);
 } else {
-  echo "Please, use 'inbox' or 'sent' as the first argument to the script\n";
+  fwrite(STDERR, "Please, use 'inbox' or 'sent' as the first argument to the script\n");
   exit(1);
 }
 
 # exit if no messages
 if (! $data->Messages->Message) {
-  echo "No messages in '$argv[1]' to delete\n";
+  fwrite(STDERR, "No messages in '$argv[1]' to delete\n");
   exit(1);
 }
 $total = count($data->Messages->Message);

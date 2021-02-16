@@ -16,7 +16,7 @@ $router->setAddress('192.168.8.1');
 
 // Username and password.
 if (! $router->login('admin', 'admin')) {
-  echo "Login failed\n";
+  fwrite(STDERR, "Login failed\n");
   exit(1);
 }
 
@@ -27,16 +27,11 @@ $message = file_get_contents("php://stdin");
 $sendFailed = null;
 
 foreach ($phones as $receiver) {
-  if (! $router->sendSms($receiver, $message) ) {
-    $sendFailed = True;
-    # if we're running from cron - output to stderr
-    if (isset($_SERVER['TERM'])) {
-      echo "SMS ERROR: $receiver\n";
-    } else {
-      fwrite(STDERR, "SMS ERROR: $receiver\n");
-    }
-  } else {
+  if ($router->sendSms($receiver, $message) ) {
     echo "SMS OK: $receiver\n";
+  } else {
+    $sendFailed = True;
+    fwrite(STDERR, "SMS ERROR: $receiver\n");
   }
 }
 

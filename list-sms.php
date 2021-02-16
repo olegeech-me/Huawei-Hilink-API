@@ -24,7 +24,7 @@ $router->setAddress('192.168.8.1');
 
 // Username and password.
 if (! $router->login('admin', 'admin')) {
-  echo "Login failed\n";
+  fwrite(STDERR, "Login failed\n");
   exit(1);
 }
 
@@ -34,7 +34,7 @@ if ($argv[1] == 'inbox') {
 } elseif ($argv[1] == 'sent') {
   $data = $router->getSentBox(1, $numberSmsToList, false);
 } else {
-  echo "Please, use 'inbox' or 'sent' as the first argument to the script\n";
+  fwrite(STDERR, "Please, use 'inbox' or 'sent' as the first argument to the script\n");
   exit(1);
 }
 
